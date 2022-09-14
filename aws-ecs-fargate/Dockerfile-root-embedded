@@ -1,0 +1,8 @@
+FROM lacework/datacollector:latest-sidecar AS agent-build-image
+
+FROM nginx:1.23.1
+
+COPY --from=agent-build-image /var/lib/lacework-backup /var/lib/lacework-backup
+
+ENTRYPOINT ["/var/lib/lacework-backup/lacework-sidecar.sh","/docker-entrypoint.sh"]
+CMD ["nginx","-g","daemon off;"]

@@ -1,0 +1,45 @@
+{
+    "containerDefinitions": [
+        {
+            "essential": true,
+            "image": "timarenz/nginx:root-embedded",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs-lwinttimarenz",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "name": "nginx",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "LaceworkAccessToken",
+                    "value": "abcdef"
+                },
+                {
+                    "name": "LaceworkServerUrl",
+                    "value": "https://api.fra.lacework.net"
+                }
+            ]
+        }
+    ],
+    "cpu": "1024",
+    "executionRoleArn": "arn:aws:iam::012345678901:role/ecs-task-execution-role-lwinttimarenz",
+    "family": "nginx-root-embedded",
+    "memory": "2048",
+    "networkMode": "awsvpc",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": [
+        "FARGATE"
+    ]
+}

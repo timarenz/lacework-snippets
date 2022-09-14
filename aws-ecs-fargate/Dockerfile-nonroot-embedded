@@ -1,0 +1,15 @@
+FROM lacework/datacollector:latest-sidecar AS agent-build-image
+
+FROM nginxinc/nginx-unprivileged:1.23.1
+
+COPY --from=agent-build-image /var/lib/lacework-backup /var/lib/lacework-backup
+
+USER root
+
+RUN apt-get update && apt-get install -y sudo && \
+    usermod -aG sudo $(id -nu 101) && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER 101
+
+ENTRYPOINT ["sh","-c","sudo -E /var/lib/lacework-backup/lacework-sidecar.sh && /docker-entrypoint.sh nginx -g 'daemon off;'"]

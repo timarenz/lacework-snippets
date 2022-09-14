@@ -1,0 +1,74 @@
+{
+    "containerDefinitions": [
+        {
+            "essential": true,
+            "image": "timarenz/nginx:nonroot-sidecar",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs-lwinttimarenz",
+                    "awslogs-region": "eu-central-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "name": "nginx",
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "entryPoint": [
+                "sh",
+                "-c",
+                "sudo -E /var/lib/lacework-backup/lacework-sidecar.sh && /docker-entrypoint.sh nginx -g 'daemon off;'"
+            ],
+            "environment": [
+                {
+                    "name": "LaceworkAccessToken",
+                    "value": "abcdef"
+                },
+                {
+                    "name": "LaceworkServerUrl",
+                    "value": "https://api.fra.lacework.net"
+                }
+            ],
+            "linuxParameters": {
+                "capabilities": {
+                    "add": [
+                        "SYS_PTRACE"
+                    ]
+                }
+            },
+            "volumesFrom": [
+                {
+                    "sourceContainer": "datacollector-sidecar",
+                    "readOnly": true
+                }
+            ],
+            "dependsOn": [
+                {
+                    "containerName": "datacollector-sidecar",
+                    "condition": "SUCCESS"
+                }
+            ]
+        },
+        {
+            "essential": false,
+            "name": "datacollector-sidecar",
+            "image": "lacework/datacollector:latest-sidecar"
+        }
+    ],
+    "cpu": "1024",
+    "executionRoleArn": "arn:aws:iam::012345678901:role/ecs-task-execution-role-lwinttimarenz",
+    "family": "nginx-nonroot-sidecar",
+    "memory": "2048",
+    "networkMode": "awsvpc",
+    "runtimePlatform": {
+        "operatingSystemFamily": "LINUX"
+    },
+    "requiresCompatibilities": [
+        "FARGATE"
+    ]
+}
