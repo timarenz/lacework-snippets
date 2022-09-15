@@ -193,6 +193,8 @@ Also the newly build image needs to be used.
             }
 ```
 
+Example file: [nginx-nonroot-embedded.json](nginx-nonroot-embedded.json)
+
 ### Non-root container with sidecar agent
 
 Another way of running the Lacework agent in a non-root container is using a `sidecar` pattern.
@@ -213,6 +215,7 @@ RUN apt-get update && apt-get install -y sudo && \
 
 USER 101
 ```
+Example file: [Dockerfile-nonroot-sidecar](Dockerfile-nonroot-sidecar)
 
 After the new container image is build we need to update the ECS task definition.
 The `entryPoint` parameter needs to be updated as per the embedded non-root pattern. Also ``
@@ -263,3 +266,54 @@ Last the Lacework agent needs to added as non essential container as well.
             "image": "lacework/datacollector:latest-sidecar"
         }
 ```
+
+Example file: [nginx-nonroot-sidecar.json](nginx-nonroot-sidecar.json)
+
+### Non-root container running as root with sidecar agent
+
+With some containers that by default run as non-root it is also supported to run them as root. 
+In this case not modification of the image is required and it can be deployed as sidecar pattern.
+In addition to the adjustemsn required in the ECS task definition for running the agent as sidecar one just needs to set the `user` parameter to `root`.
+
+```json
+            "user": "root",
+            "entryPoint": [
+                "/var/lib/lacework-backup/lacework-sidecar.sh",
+                "/docker-entrypoint.sh"
+            ],
+            "command": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "environment": [
+                {
+                    "name": "LaceworkAccessToken",
+                    "value": "abcdef"
+                },
+                {
+                    "name": "LaceworkServerUrl",
+                    "value": "https://api.fra.lacework.net"
+                }
+            ],
+            "volumesFrom": [
+                {
+                    "sourceContainer": "datacollector-sidecar",
+                    "readOnly": true
+                }
+            ],
+            "dependsOn": [
+                {
+                    "containerName": "datacollector-sidecar",
+                    "condition": "SUCCESS"
+                }
+            ]
+        },
+        {
+            "essential": false,
+            "name": "datacollector-sidecar",
+            "image": "lacework/datacollector:latest-sidecar"
+        }
+    ],
+```
+Example file: [nginx-nonrootasroot-sidecar.json](nginx-nonrootasroot-sidecar.json)
