@@ -1,0 +1,8 @@
+FROM lacework/datacollector:latest-sidecar AS agent-build-image
+
+FROM bitnami/neo4j:latest
+
+COPY --from=agent-build-image /var/lib/lacework-backup /var/lib/lacework-backup
+
+ENTRYPOINT ["/var/lib/lacework-backup/lacework-sidecar.sh","/opt/bitnami/scripts/neo4j/entrypoint.sh"]
+CMD ["/opt/bitnami/scripts/neo4j/run.sh"]

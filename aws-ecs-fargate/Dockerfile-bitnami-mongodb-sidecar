@@ -1,0 +1,3 @@
+FROM bitnami/mongodb:latest
+
+COPY ./scripts/mongodb-env.sh /opt/bitnami/scripts/mongodb-env.sh

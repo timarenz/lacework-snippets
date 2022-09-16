@@ -1,0 +1,10 @@
+FROM lacework/datacollector:latest-sidecar AS agent-build-image
+
+FROM bitnami/mongodb:latest
+
+COPY --from=agent-build-image /var/lib/lacework-backup /var/lib/lacework-backup
+
+COPY ./scripts/mongodb-env.sh /opt/bitnami/scripts/mongodb-env.sh
+
+ENTRYPOINT ["/var/lib/lacework-backup/lacework-sidecar.sh","/opt/bitnami/scripts/mongodb/entrypoint.sh"]
+CMD ["/opt/bitnami/scripts/mongodb/run.sh"]
