@@ -1,0 +1,23 @@
+stages:
+  - lacework-inline-scanner
+
+lacework-inline-scanner:
+  image: docker:latest
+  stage: lacework-inline-scanner
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" .
+    - |
+      docker run \
+      -e LW_ACCOUNT_NAME \
+      -e LW_ACCESS_TOKEN \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      lacework/lacework-inline-scanner:latest \
+      image evaluate "$CI_REGISTRY_IMAGE" "$CI_COMMIT_SHORT_SHA" \
+      --build-id "$CI_COMMIT_SHORT_SHA" --build-plan "$CI_PROJECT_NAME" \
+      --pretty --simple --no-color \
+      --policy --fail-on-violation-exit-code 1 \
+      --save
