@@ -1,0 +1,9 @@
+clusterAgent:
+  enable: false
+  clusterType: eks
+  clusterRegion: <aws-region>
+laceworkConfig:
+  accessToken: <access-token>
+  autoUpgrade: false
+  kubernetesCluster: <cluster-name>
+  serverUrl: https://api.fra.lacework.net
