@@ -4,6 +4,6 @@ clusterAgent:
   clusterRegion: <aws-region>
 laceworkConfig:
   accessToken: <access-token>
-  autoUpgrade: false
+  autoUpgrade: "disable"
   kubernetesCluster: <cluster-name>
   serverUrl: https://api.fra.lacework.net
