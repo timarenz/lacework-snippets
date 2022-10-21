@@ -40,4 +40,3 @@ Example file: [.gitlab-ci.yml](.gitlab-ci.yml)
 Example of a failed/blocked job.
 
 ![Example of a failed/blocked job](example-blocked-job.png)
-)

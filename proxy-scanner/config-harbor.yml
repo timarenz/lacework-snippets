@@ -1,0 +1,27 @@
+static_cache_location: /opt/lacework
+scan_public_registries: true
+lacework:
+  account_name: youraccount.fra
+  integration_access_token: _123456789abcdef123456789abcd
+default_registry: index.docker.io
+registries:
+  - domain: index.docker.io
+    name: Docker Hub
+    is_public: true
+    ssl: true
+    auto_poll: false
+    disable_non_os_package_scanning: false
+    go_binary_scanning:
+      enable: true
+  - domain: registry.harbor.example
+    name: Harbor
+    ssl: true
+    is_public: false
+    auto_poll: false
+    credentials:
+      user_name: "proxy-scanner"
+      password: "Proxyscanner1"
+    notification_type: harbor
+    disable_non_os_package_scanning: false
+    go_binary_scanning:
+      enable: true

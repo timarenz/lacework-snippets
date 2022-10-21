@@ -1,0 +1,5 @@
+static_cache_location: /opt/lacework
+scan_public_registries: true
+lacework:
+  account_name: youraccount.fra
+  integration_access_token: _123456789abcdef123456789abcd
